@@ -3,13 +3,12 @@
 import axios from 'axios';
 import express = require("express");
 import Utils from './Utils';
-
+let config = require( "../config.json");
 export default class SfmcApiHelper
 {
     // Instance variables
-    private _deExternalKey = "DF18Demo";
-    private _sfmcDataExtensionApiUrl = "https://www.exacttargetapis.com/hub/v1/dataevents/key:" + this._deExternalKey + "/rowset";
-
+    private _deExternalKey = config.deExternalKey;
+    private _sfmcDataExtensionApiUrl = config.rest_base_uri + "hub/v1/dataevents/key:" + this._deExternalKey + "/rowset";
     /**
      * getOAuthAccessToken: POSTs to SFMC Auth URL to get an OAuth access token with the given ClientId and ClientSecret
      * 
@@ -27,8 +26,9 @@ export default class SfmcApiHelper
         };
 
         let postBody = {
-            'clientId': clientId,
-            'clientSecret': clientSecret
+            'grant_type': 'client_credentials',
+            'client_id': clientId,
+            'client_secret': clientSecret
         };
 
         return self.getOAuthTokenHelper(headers, postBody);
@@ -51,8 +51,8 @@ export default class SfmcApiHelper
         };
 
         let postBody = {
-            'clientId': clientId,
-            'clientSecret': clientSecret,
+            'client_id': clientId,
+            'client_secret': clientSecret,
             'refreshToken': refreshToken
         };
 
@@ -68,11 +68,11 @@ export default class SfmcApiHelper
         return new Promise<any>((resolve, reject) =>
         {
             // POST to Marketing Cloud REST Auth service and get back an OAuth access token.
-            let sfmcAuthServiceApiUrl = "https://auth.exacttargetapis.com/v1/requestToken";
+            let sfmcAuthServiceApiUrl = config.auth_base_uri + "v2/token";
             axios.post(sfmcAuthServiceApiUrl, postBody, {"headers" : headers})
             .then((response: any) => {
                 // success
-                let accessToken = response.data.accessToken;
+                let accessToken = response.data.access_token;
                 let tokenExpiry = new Date();
                 tokenExpiry.setSeconds(tokenExpiry.getSeconds() + response.data.expiresIn);
                 Utils.logInfo("Got OAuth token: " + accessToken + ", expires = " +  tokenExpiry);
@@ -140,7 +140,7 @@ export default class SfmcApiHelper
         Utils.logInfo("loadDataHelper called.");
         Utils.logInfo("Loading sample data into Data Extension: " + self._deExternalKey);
         Utils.logInfo("Using OAuth token: " + oauthAccessToken);
-
+        
         return new Promise<any>((resolve, reject) =>
         {
             let headers = {

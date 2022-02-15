@@ -104,7 +104,6 @@ export default class SfmcAppDemoRoutes
         req.session.oauthAccessTokenExpiry = "";
 
         Utils.logInfo("getOAuthAccessToken route entered. SessionId = " + sessionId);
-
         if (clientId && clientSecret)
         {
             if (req.session.refreshTokenFromJWT)

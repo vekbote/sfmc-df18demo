@@ -1,0 +1,5 @@
+{
+    "auth_base_uri": "YOUR_AUTH_BASE_URI_HERE_ENDING_WITH_FWD_SLASH/",
+    "rest_base_uri": "YOUR_REST_BASE_URI_HERE_ENDING_WITH_FWD_SLASH/",
+    "deExternalKey": "YOUR_DATA_EXTENSION_EXTERNAL_KEY_HERE"
+}
